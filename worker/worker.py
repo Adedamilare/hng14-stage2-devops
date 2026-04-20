@@ -16,8 +16,13 @@ def process_job(job_id):
     r.hset(f"job:{job_id}", "status", "completed")
     print(f"Done: {job_id}")
 
+import time
+
 while True:
-    job = r.brpop("job", timeout=5)
-    if job:
-        _, job_id = job
-        process_job(job_id.decode())
+    try:
+        job = rpop("jobs", timeout=5)
+        if job:
+            process(job)
+    except Exception as e:
+        print(f"Error: {e}")
+        time.sleep(2)

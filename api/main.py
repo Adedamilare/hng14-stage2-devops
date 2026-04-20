@@ -10,6 +10,9 @@ r = redis.Redis(host="REDIS_HOST", port="REDIS_PORT")
 REDIS_HOST = os.getenv("REDIS_HOST")
 REDIS_PORT = int(os.getenv("REDIS_PORT"))
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
 @app.post("/jobs")
 def create_job():

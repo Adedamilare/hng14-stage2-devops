@@ -29,3 +29,8 @@ while True:
         print(f"Error: {e}")
         time.sleep(2)
         
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+        

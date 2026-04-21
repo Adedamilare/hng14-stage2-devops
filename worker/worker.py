@@ -1,3 +1,5 @@
+from multiprocessing import process
+
 import redis
 import time
 import os
@@ -20,9 +22,10 @@ import time
 
 while True:
     try:
-        job = rpop("jobs", timeout=5)
+        job = redis.brpop("jobs", timeout=5)
         if job:
             process(job)
     except Exception as e:
         print(f"Error: {e}")
         time.sleep(2)
+        

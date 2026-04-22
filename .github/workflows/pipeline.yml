@@ -36,13 +36,11 @@ jobs:
 
       # TEST
       - name: Run Tests
+        working-directory: api
         run: |
           pip install pytest pytest-cov
-          cd api
-          pytest --cov=. --cov-report=xml
-      - name: Run tests with coverage
-        working-directory: api
-        run: pytest tests/ --cov=. --cov-report=xml --cov-report=term
+          pytest tests/ --cov=. --cov-report=xml --cov-report=term
+          
       - uses: actions/upload-artifact@v4
         with:
            name: coverage-report

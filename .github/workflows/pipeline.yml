@@ -24,6 +24,7 @@ jobs:
       - name: Lint JS
         run: |
           cd frontend
+          npm install eslint@8 --save-dev
           npm install
           npx eslint .
 

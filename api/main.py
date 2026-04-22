@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 import redis
 import uuid
@@ -33,7 +33,7 @@ def health():
     return {"status": "ok"}
 
 
-@app.post("/jobs")
+@app.post("/jobs", status_code=status.HTTP_201_CREATED)
 def create_job():
     job_id = str(uuid.uuid4())
     r.lpush("job", job_id)

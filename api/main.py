@@ -30,6 +30,7 @@ app.add_middleware(
 
 @app.get("/health")
 def health():
+    r.ping()  # will raise if Redis is not available
     return {"status": "ok"}
 
 

@@ -43,4 +43,3 @@ while True:
         process_job(job_id)
     except Exception as e:
         logger.error(f"Error processing job {job_id}: {e}")
-        

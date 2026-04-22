@@ -19,8 +19,7 @@ jobs:
 
       # LINT
       - name: Lint Python
-        run: pip install flake8 && flake8 .
-             pip install fastapi && flake8 api
+        run: pip install flake8 fastapi && flake8 . && flake8 api
 
       - name: Lint JS
         run: |

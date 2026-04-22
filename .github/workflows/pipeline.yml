@@ -39,6 +39,13 @@ jobs:
           pip install pytest pytest-cov
           cd api
           pytest --cov=. --cov-report=xml
+      - name: Run tests with coverage
+        working-directory: api
+        run: pytest tests/ --cov=. --cov-report=xml --cov-report=term
+      - uses: actions/upload-artifact@v4
+        with:
+           name: coverage-report
+           path: api/coverage.xml
 
       # BUILD
       - name: Build Images
@@ -55,6 +62,12 @@ jobs:
             exit-code: '1'
             ignore-unfixed: true
             severity: 'CRITICAL'
+      - name: Upload SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-sarif
+          path: trivy-results/
 
       # INTEGRATION
       - name: Integration Test

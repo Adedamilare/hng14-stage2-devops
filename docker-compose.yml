@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+
+  api:
+    build: ./api
+    environment:
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+    ports:
+      - "8000:8000"
+
+  worker:
+    build: ./worker
+    environment:
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    environment:
+      REACT_APP_API_URL: ${API_URL}
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+
+networks:
+  app-network:

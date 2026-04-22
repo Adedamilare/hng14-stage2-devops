@@ -98,3 +98,4 @@ def test_health_calls_redis_ping(mock_redis):
     client.get("/health")
 
     mock_redis.ping.assert_called_once()
+    

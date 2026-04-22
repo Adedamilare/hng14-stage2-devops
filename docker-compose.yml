@@ -9,7 +9,9 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       retries: 5
-
+    restart: unless-stopped
+    mem_limit: 256m
+    cpus: "0.25"
   api:
     build: ./api
     environment:
@@ -21,6 +23,9 @@ services:
       - app-network
     ports:
       - "8000:8000"
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: "0.50"
 
   worker:
     build: ./worker
@@ -31,6 +36,9 @@ services:
         condition: service_healthy
     networks:
       - app-network
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: "0.50"
 
   frontend:
     build: ./frontend
@@ -43,6 +51,9 @@ services:
       - app-network
     ports:
       - "3000:3000"
+    restart: unless-stopped
+    mem_limit: 256m
+    cpus: "0.25"
 
 networks:
   app-network:

@@ -3,15 +3,20 @@ import redis
 import uuid
 import os
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
 
 r = redis.Redis(host="REDIS_HOST", port="REDIS_PORT")
 
-REDIS_HOST = os.getenv("REDIS_HOST")
+# Load environment variables
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT"))
 
-from fastapi.middleware.cors import CORSMiddleware
+# Initialize Redis
+r =redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=False) 
 
+# Cord Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

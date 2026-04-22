@@ -1,22 +1,24 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import redis
 import uuid
 import os
 
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-r = redis.Redis(host="REDIS_HOST", port="REDIS_PORT")
-
 # Load environment variables
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-REDIS_PORT = int(os.getenv("REDIS_PORT"))
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 
-# Initialize Redis
-r =redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=False) 
+# Initialize Redis (only once)
+r = redis.Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    decode_responses=False,
+)
 
-# Cord Middleware
+# CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,9 +27,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
 
 @app.post("/jobs")
 def create_job():
@@ -36,9 +40,15 @@ def create_job():
     r.hset(f"job:{job_id}", "status", "queued")
     return {"job_id": job_id}
 
+
 @app.get("/jobs/{job_id}")
 def get_job(job_id: str):
     status = r.hget(f"job:{job_id}", "status")
+
     if not status:
         return {"error": "not found"}
-    return {"job_id": job_id, "status": status.decode()}
+
+    return {
+        "job_id": job_id,
+        "status": status.decode(),
+    }

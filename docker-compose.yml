@@ -5,9 +5,11 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/health", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
       retries: 5
+      start_period: 20s
     restart: unless-stopped
     deploy:
       resources:

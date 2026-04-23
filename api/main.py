@@ -4,7 +4,6 @@ import redis
 import uuid
 import os
 
-
 app = FastAPI()
 
 # Load environment variables
@@ -27,12 +26,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.get("/health")
 def health():
     r.ping()  # will raise if Redis is not available
     return {"status": "ok"}
 
+# FIX: Added missing user creation endpoint (api_user_creation_cmd)
+@app.post("/users", status_code=status.HTTP_201_CREATED)
+def create_user():
+    user_id = str(uuid.uuid4())
+    r.hset(f"user:{user_id}", "status", "active")
+    return {"user_id": user_id, "status": "active"}
 
 @app.post("/jobs", status_code=status.HTTP_201_CREATED)
 def create_job():
@@ -41,15 +45,12 @@ def create_job():
     r.hset(f"job:{job_id}", "status", "queued")
     return {"job_id": job_id}
 
-
 @app.get("/jobs/{job_id}")
 def get_job(job_id: str):
-    status = r.hget(f"job:{job_id}", "status")
-
-    if not status:
+    status_val = r.hget(f"job:{job_id}", "status")
+    if not status_val:
         raise HTTPException(status_code=404, detail="Job not found")
-
     return {
         "job_id": job_id,
-        "status": status.decode(),
+        "status": status_val.decode(),
     }

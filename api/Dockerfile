@@ -1,4 +1,4 @@
-FROM python:3.11-slim@sha256:<sha256:92c262cbb2e99cdc16218338d74fbe518055c13d224d942708f70f8042ff6d18> AS builder
+FROM python:3.11-slim@sha256:92c262cbb2e99cdc16218338d74fbe518055c13d224d942708f70f8042ff6d18 AS builder
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 # Stage 2: runtime
-FROM python:3.11-slim@sha256:<sha256:92c262cbb2e99cdc16218338d74fbe518055c13d224d942708f70f8042ff6d18>
+FROM python:3.11-slim@sha256:92c262cbb2e99cdc16218338d74fbe518055c13d224d942708f70f8042ff6d18
 
 # Install curl for health check
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]

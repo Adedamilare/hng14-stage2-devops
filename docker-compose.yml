@@ -7,7 +7,7 @@ services:
     networks:
       - app-network
     volumes:
-      - redis-data:/data
+      - ./redis-data:/data
 
     healthcheck:
       test: ["CMD-SHELL", "apk add --no-cache curl && curl -f http://localhost:6379 || exit 1"]

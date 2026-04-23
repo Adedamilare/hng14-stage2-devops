@@ -42,6 +42,7 @@ jobs:
         working-directory: api
         run: |
           pip install pytest pytest-cov -r requirements.txt
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
           pytest tests/test_prod.py --cov=. --cov-report=xml --cov-report=term --cov-report=term-missing
 
           

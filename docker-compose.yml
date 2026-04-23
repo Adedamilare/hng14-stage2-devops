@@ -27,6 +27,8 @@ services:
     container_name: hng14-stage2-devops-api-1
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       redis:
         condition: service_healthy
@@ -37,10 +39,10 @@ services:
     restart: unless-stopped
     # FIX: added missing healthcheck required by frontend's service_healthy condition
     healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:8000/health || wget -q -O- http://localhost:8000/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD", "python", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').getcode() == 200 else 1)"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
       start_period: 30s
     deploy:
       resources:

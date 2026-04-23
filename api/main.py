@@ -59,7 +59,7 @@ def health():
 
         # Test Redis connection
         r.ping()
-        return {"status": "healthy", "redis": "connected"}
+        return {"status": "ok"}
     except redis.ConnectionError as e:
         logger.error(f"Redis connection error: {e}")
         return JSONResponse(

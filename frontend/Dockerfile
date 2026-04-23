@@ -1,11 +1,11 @@
 FROM node:18-alpine AS build
-
 WORKDIR /app
+
 # Install dependencies
 COPY package*.json .
 RUN npm ci --only=production
 
-#Copy source code and build
+# Copy source code and build
 COPY . .
 
 # Build the application
@@ -39,7 +39,7 @@ EXPOSE 3000
 
 # Health check to ensure the application is running
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-CMD curl --fail http://localhost:3000 || exit 1
+    CMD curl --fail http://localhost:3000 || exit 1
 
 # Start the application
 CMD ["npm", "start"]

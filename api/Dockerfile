@@ -9,7 +9,7 @@ RUN pip install --user --no-cache-dir -r requirements.txt
 FROM python:3.11-slim
 
 # Install curl for health check
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
+RUN apt-get update && apt-get install -y --no-install-recommends curl=7.81.0-1ubuntu1.14 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user

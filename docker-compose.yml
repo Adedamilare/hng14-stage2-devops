@@ -1,5 +1,4 @@
 version: "3.9"
-
 services:
   redis:
     image: redis:7-alpine
@@ -10,8 +9,12 @@ services:
       interval: 5s
       retries: 5
     restart: unless-stopped
-    mem_limit: 256m
-    cpus: "0.25"
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: "0.25"
+
   api:
     build: ./api
     environment:
@@ -24,8 +27,18 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
-    mem_limit: 512m
-    cpus: "0.50"
+    # FIX: added missing healthcheck required by frontend's service_healthy condition
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: "0.50"
 
   worker:
     build: ./worker
@@ -37,8 +50,11 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-    mem_limit: 512m
-    cpus: "0.50"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: "0.50"
 
   frontend:
     build: ./frontend
@@ -52,8 +68,11 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
-    mem_limit: 256m
-    cpus: "0.25"
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: "0.25"
 
 networks:
   app-network:

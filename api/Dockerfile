@@ -1,4 +1,5 @@
-FROM python:3.11-slim AS builder
+FROM python:3.11-slim@sha256:<sha256:92c262cbb2e99cdc16218338d74fbe518055c13d224d942708f70f8042ff6d18> AS builder
+
 WORKDIR /app
 
 # Install dependencies
@@ -6,14 +7,15 @@ COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 # Stage 2: runtime
-FROM python:3.11-slim
+FROM python:3.11-slim@sha256:<sha256:92c262cbb2e99cdc16218338d74fbe518055c13d224d942708f70f8042ff6d18>
 
 # Install curl for health check
-RUN apt-get update && apt-get install -y --no-install-recommends \ curl=7.88.1-10+deb12u14 \
+RUN apt-get update && apt-get install -y --no-install-recommends \ 
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
-RUN useradd -m appuser
+RUN useradd -m -u 10001 appuser
 
 WORKDIR /app
 
@@ -24,7 +26,7 @@ COPY --from=builder /root/.local /home/appuser/.local
 COPY . .
 
 # Set ownership
-RUN chown -R appuser:appuser /app
+RUN chown -R appuser:appuser /app /home/appuser/.local
 
 # Switch to non-root user
 USER appuser
@@ -35,6 +37,7 @@ ENV PATH=/home/appuser/.local/bin:$PATH
 # Expose port
 EXPOSE 8000
 
-HEALTHCHECK CMD curl --fail http://localhost:8000/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl --fail http://localhost:8000/health || exit 1
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

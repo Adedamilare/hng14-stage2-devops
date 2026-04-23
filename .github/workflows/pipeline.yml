@@ -20,8 +20,9 @@ jobs:
       # LINT
       - name: Lint Python
         run: |
-          pip install flake8 fastapi && flake8 . 
-          pip install -r api/requirements.txt && flake8 api
+          pip install flake8  
+          pip install -r api/requirements.txt 
+          flake8 .
 
       - name: Lint JS
         run: |
@@ -40,8 +41,9 @@ jobs:
       - name: Run Tests
         working-directory: api
         run: |
-          pip install pytest pytest-cov
-          pytest tests/test_prod.py --cov=. --cov-report=xml --cov-report=term
+          pip install pytest pytest-cov -r requirements.txt
+          pytest tests/test_prod.py --cov=. --cov-report=xml --cov-report=term --cov-report=term-missing
+
           
       - uses: actions/upload-artifact@v4
         with:
@@ -51,15 +53,19 @@ jobs:
       # BUILD
       - name: Build Images
         run: |
-          docker build -t localhost:5000/api:latest ./api
-          docker push localhost:5000/api:latest
+          IMAGE=localhost:5000/api:${{ github.sha }}
+          IMAGE_LATEST=localhost:5000/api:latest
+          docker build -t $IMAGE -t $IMAGE_LATEST ./api
+          docker push $IMAGE
+          docker push $IMAGE_LATEST
 
       # SECURITY
       - name: Scan with Trivy
         uses: aquasecurity/trivy-action@master
         with:
             image-ref: 'localhost:5000/api:latest'
-            format: 'table'
+            format: 'sarif'
+            output: 'trivy-results.sarif'
             exit-code: '1'
             ignore-unfixed: true
             severity: 'CRITICAL'
@@ -68,7 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trivy-sarif
-          path: trivy-results/
+          path: trivy-results.sarif
 
       # INTEGRATION
       - name: Integration Test

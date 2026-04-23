@@ -24,6 +24,7 @@ services:
 
   api:
     build: ./api
+    container_name: hng14-stage2-devops-api-1
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
     depends_on:

@@ -1,7 +1,7 @@
 services:
   redis:
     image: redis:7-alpine
-    container_name: hng14-stage2-devops-redis-1
+    #container_name: hng14-stage2-devops-redis-1
     ports:
       - "6379:6379"
     networks:
@@ -24,7 +24,7 @@ services:
 
   api:
     build: ./api
-    container_name: hng14-stage2-devops-api-1
+    #container_name: hng14-stage2-devops-api-1
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       REDIS_HOST: redis

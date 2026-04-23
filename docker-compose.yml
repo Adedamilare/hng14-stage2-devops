@@ -6,17 +6,17 @@ services:
       - "6379:6379"
 
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8000/health", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "apk add --no-cache curl && curl -f http://localhost:6379 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 20s
+      start_period: 30s
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          memory: 256m
-          cpus: "0.25"
+          memory: 512m
+          cpus: "0.5"
 
   api:
     build: ./api

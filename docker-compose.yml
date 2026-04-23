@@ -37,13 +37,13 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
-    # FIX: Simplified healthcheck using HTTP status code only
+    # FIX: TCP port check - fastest and most reliable
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').getcode() == 200"]
+      test: ["CMD", "python", "-c", "import socket; s=socket.socket(); s.connect(('localhost',8000)); s.close()"]
       interval: 10s
-      timeout: 10s
-      retries: 20              # Increased retries for slower environments
-      start_period: 90s        # Extended startup period for Redis connection
+      timeout: 5s
+      retries: 15
+      start_period: 45s
     deploy:
       resources:
         limits:

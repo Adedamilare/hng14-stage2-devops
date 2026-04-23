@@ -11,7 +11,8 @@ RUN npm ci
 COPY . .
 
 # Build the application
-RUN npm run build
+# RUN npm run build
+# No build step needed for this simple Express app
 
 # Remove dev dependencies to reduce image size
 RUN npm prune --omit=dev

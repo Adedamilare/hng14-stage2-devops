@@ -1,9 +1,11 @@
-FROM node:18-alpine AS build
+FROM node:18-alpine AS builder
+
 WORKDIR /app
 
 # Install dependencies
-COPY package*.json .
-RUN npm ci --only=production
+COPY package.json package-lock.json ./
+
+RUN npm ci
 
 # Copy source code and build
 COPY . .
@@ -26,7 +28,7 @@ RUN adduser -D appuser
 WORKDIR /app
 
 # Copy built application from builder stage
-COPY --from=build /app .
+COPY --from=builder /app .
 
 # Set ownership
 RUN chown -R appuser:appuser /app

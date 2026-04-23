@@ -22,13 +22,13 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 # Initialize Redis (only once)
 try:
     r = redis.Redis(
-    host=REDIS_HOST,
-    port=REDIS_PORT,
-    decode_responses=False,
-    socket_connect_timeout=5,
-    socket_timeout=5,
-)
-# Test connection
+        host=REDIS_HOST,
+        port=REDIS_PORT,
+        decode_responses=False,
+        socket_connect_timeout=5,
+        socket_timeout=5,
+    )
+    # Test connection
     r.ping()
     logger.info(f"Connected to Redis at {REDIS_HOST}:{REDIS_PORT}")
 except Exception as e:

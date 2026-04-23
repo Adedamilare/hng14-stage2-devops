@@ -6,9 +6,11 @@ import os
 
 app = FastAPI()
 
+
 # Load environment variables
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+
 
 # Initialize Redis (only once)
 r = redis.Redis(
@@ -16,6 +18,7 @@ r = redis.Redis(
     port=REDIS_PORT,
     decode_responses=False,
 )
+
 
 # CORS Middleware
 app.add_middleware(
@@ -26,10 +29,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/health")
 def health():
     r.ping()  # will raise if Redis is not available
     return {"status": "ok"}
+
 
 # FIX: Added missing user creation endpoint (api_user_creation_cmd)
 @app.post("/users", status_code=status.HTTP_201_CREATED)
@@ -38,12 +43,14 @@ def create_user():
     r.hset(f"user:{user_id}", "status", "active")
     return {"user_id": user_id, "status": "active"}
 
+
 @app.post("/jobs", status_code=status.HTTP_201_CREATED)
 def create_job():
     job_id = str(uuid.uuid4())
     r.lpush("job", job_id)
     r.hset(f"job:{job_id}", "status", "queued")
     return {"job_id": job_id}
+
 
 @app.get("/jobs/{job_id}")
 def get_job(job_id: str):

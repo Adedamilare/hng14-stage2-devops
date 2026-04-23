@@ -1,23 +1,26 @@
 FROM python:3.11-slim AS builder
-
 WORKDIR /app
 
-#Install dependencies
+# Install dependencies
 COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
-#Stage 2: runtime
+# Stage 2: runtime
 FROM python:3.11-slim
 
-#Create non-root user
+# Install curl for health check
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
 RUN useradd -m appuser
 
 WORKDIR /app
 
-#Copy installed dependencies from builder stage
+# Copy installed dependencies from builder stage
 COPY --from=builder /root/.local /home/appuser/.local
 
-#Copy application code
+# Copy application code
 COPY . .
 
 # Set ownership
@@ -29,7 +32,7 @@ USER appuser
 # Ensure Python can find the installed packages
 ENV PATH=/home/appuser/.local/bin:$PATH
 
-#Expose port
+# Expose port
 EXPOSE 8000
 
 HEALTHCHECK CMD curl --fail http://localhost:8000/health || exit 1

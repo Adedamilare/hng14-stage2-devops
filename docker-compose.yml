@@ -10,7 +10,7 @@ services:
       - redis-data:/data
 
     healthcheck:
-      test: ["CMD", "redis-cli", "ping  "]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -36,7 +36,7 @@ services:
     restart: unless-stopped
     # FIX: added missing healthcheck required by frontend's service_healthy condition
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
+      test: ["CMD", "--fail", "http://localhost:8000/health"]
       interval: 10s
       timeout: 5s
       retries: 5

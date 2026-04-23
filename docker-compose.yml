@@ -37,7 +37,7 @@ services:
     restart: unless-stopped
     # FIX: added missing healthcheck required by frontend's service_healthy condition
     healthcheck:
-      test: ["CMD", "redis-cli", "-h", "redis", "ping"]
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:8000/health || wget -q -O- http://localhost:8000/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5

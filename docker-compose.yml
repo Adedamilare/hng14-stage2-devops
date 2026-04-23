@@ -1,6 +1,7 @@
 services:
   redis:
     image: redis:7-alpine
+    container_name: hng14-stage2-devops-redis-1
     ports:
       - "${REDIS_PORT:-6379}:6379"
     networks:

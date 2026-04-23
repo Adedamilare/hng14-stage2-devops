@@ -39,7 +39,7 @@ services:
     restart: unless-stopped
     # FIX: added missing healthcheck required by frontend's service_healthy condition
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').getcode() == 200 else 1)"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read().decode().find('\"status\":\"ok\"') != -1"]
       interval: 15s
       timeout: 10s
       retries: 10

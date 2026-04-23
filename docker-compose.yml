@@ -37,13 +37,13 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
-    # FIX: added missing healthcheck required by frontend's service_healthy condition
+    # FIX: Improved healthcheck to handle slow startup and prevent timeout
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read().decode().find('\"status\":\"ok\"') != -1"]
-      interval: 15s
-      timeout: 10s
-      retries: 10
-      start_period: 40s
+      test: ["CMD-SHELL", "python -c \"import urllib.request; import sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').read().decode().find('\\\"status\\\":\\\"ok\\\"') != -1 else 1)\""]
+      interval: 10s           # Check more frequently
+      timeout: 30s            # Increased timeout for slow responses
+      retries: 15             # More retries for slow startup
+      start_period: 60s       # Longer startup grace period
     deploy:
       resources:
         limits:

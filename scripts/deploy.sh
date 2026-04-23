@@ -22,7 +22,7 @@ $DOCKER_COMPOSE up -d --no-deps --scale api=$NEW_COUNT api
 echo "⏳ Waiting for new container to become healthy..."
 
 # Wait for health check
-timeout 60 bash -c '
+timeout 120 bash -c '
 while true; do
   if curl -fs http://localhost:8000/health | grep -q "\"status\":\"ok\""; then
     echo "✅ Health check passed"
